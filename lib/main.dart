@@ -451,7 +451,11 @@ class StudentHomePage extends StatelessWidget {
           var studentData =
               snapshot.data!.data() as Map<String, dynamic>? ?? {};
           return Center(
-            child: Text('Welcome, ${studentData['s_FirstName']}!'),
+            child: Column(
+              children: [
+                Text('Welcome, ${studentData['s_FirstName']}!'),
+              ],
+            ),
           );
         },
       ),
@@ -560,12 +564,312 @@ class InstructorHomePage extends StatelessWidget {
           }
           var instructorData =
               snapshot.data!.data() as Map<String, dynamic>? ?? {};
-          return Center(
-            child: Text('Welcome, Dr. ${instructorData['i_FirstName']}!'),
+          return Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/1609391092746.png"),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(Colors.black54, BlendMode.darken),
+              ),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black45),
+                      color: AppTheme.accentTransparent,
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 60,
+                          backgroundImage:
+                              AssetImage('${instructorData['i_ProfilePic']}'),
+                        ),
+                        const SizedBox(width: 50),
+                        Text(
+                          'Welcome, Dr. ${instructorData['i_FirstName']} ${instructorData['i_LastName']}!',
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: FutureBuilder<List<Map<String, dynamic>>>(
+                      future: _fetchLecturesForToday(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text('Error loading lectures'));
+                        }
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Center(
+                              child: Text('No lectures available today'));
+                        }
+                        var lectures = snapshot.data!;
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.white70,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(50),
+                              height: 500,
+                              width: 627,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    children: [
+                                      const Text(
+                                        'Today\'s lecture',
+                                        style: TextStyle(
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      DataTable(
+                                        border: TableBorder.all(
+                                          color: Colors.black45,
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(8)),
+                                        ),
+                                        columns: const [
+                                          DataColumn(
+                                              label: Text('Course Code')),
+                                          DataColumn(
+                                              label: Text('Course Name')),
+                                          DataColumn(label: Text('Credits')),
+                                          DataColumn(label: Text('Start Time')),
+                                        ],
+                                        rows: lectures
+                                            .map(
+                                              (lecture) => DataRow(
+                                                cells: [
+                                                  DataCell(Text(
+                                                      lecture['c_CourseCode'])),
+                                                  DataCell(Text(
+                                                      lecture['c_CourseName'])),
+                                                  DataCell(Text(
+                                                      lecture['c_Credit']
+                                                          .toString())),
+                                                  DataCell(Text(
+                                                      lecture['start_time'])),
+                                                ],
+                                              ),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.white70,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(50),
+                              height: 500,
+                              width: 627,
+                              child: Column(
+                                children: [
+                                  const Text(
+                                    'Taken Attendance',
+                                    style: TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  FutureBuilder<List<Map<String, dynamic>>>(
+                                    future: _fetchAttendanceForLecture(
+                                        lectures.first['l_LectureID']),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Center(
+                                            child: CircularProgressIndicator());
+                                      }
+                                      if (snapshot.hasError) {
+                                        return const Center(
+                                            child: Text(
+                                                'Error loading attendance'));
+                                      }
+                                      if (!snapshot.hasData ||
+                                          snapshot.data!.isEmpty) {
+                                        return const Center(
+                                            child: Text(
+                                                'No attendance records available'));
+                                      }
+                                      var attendance = snapshot.data!;
+                                      return Expanded(
+                                        child: DataTable(
+                                          border: TableBorder.all(
+                                            color: Colors.black45,
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(8)),
+                                          ),
+                                          columns: const [
+                                            DataColumn(
+                                                label: Text('Lecture ID')),
+                                            DataColumn(
+                                                label: Text('Student ID')),
+                                            DataColumn(label: Text('Time')),
+                                          ],
+                                          rows: attendance
+                                              .map(
+                                                (record) => DataRow(
+                                                  cells: [
+                                                    DataCell(Text(
+                                                        record['l_LectureID'])),
+                                                    DataCell(Text(
+                                                        record['s_StudentID'])),
+                                                    DataCell(
+                                                        Text(record['time'])),
+                                                  ],
+                                                ),
+                                              )
+                                              .toList(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
           );
         },
       ),
     );
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchLecturesForToday() async {
+    DateTime now = DateTime.now();
+    List<String> weekdays = [
+      'sunday',
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday'
+    ];
+    String today =
+        weekdays[now.weekday]; // Adjust for 0-based index in the list
+    print("Today's day: $today");
+
+    QuerySnapshot lectureSnapshot = await FirebaseFirestore.instance
+        .collection('lecture')
+        .where('l_Date', isEqualTo: today)
+        .get();
+    print(
+        "Lecture snapshot retrieved: ${lectureSnapshot.docs.length} documents found");
+
+    List<Map<String, dynamic>> lectures = [];
+
+    for (var lectureDoc in lectureSnapshot.docs) {
+      var lectureData = lectureDoc.data() as Map<String, dynamic>;
+      print("Lecture data: $lectureData");
+
+      QuerySnapshot courseSnapshot = await FirebaseFirestore.instance
+          .collection('course')
+          .where('c_CourseCode', isEqualTo: lectureData['c_CourseCode'])
+          .get();
+      print(
+          "Course query executed for c_CourseCode: ${lectureData['c_CourseCode']}");
+
+      if (courseSnapshot.docs.isNotEmpty) {
+        var courseData =
+            courseSnapshot.docs.first.data() as Map<String, dynamic>;
+        print("Course data: $courseData");
+
+        lectures.add({
+          'l_LectureID': lectureData['l_LectureID'],
+          'c_CourseCode': courseData['c_CourseCode'],
+          'c_CourseName': courseData['c_CourseName'],
+          'c_Credit': courseData['c_credit'],
+          'start_time': lectureData['start_time'],
+        });
+        print("Lecture added to list: ${lectures.last}");
+      } else {
+        print(
+            "No course found for c_CourseCode: ${lectureData['c_CourseCode']}");
+      }
+    }
+
+    print("Total lectures for today: ${lectures.length}");
+    return lectures;
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchAttendanceForLecture(
+      String lectureId) async {
+    print("Fetching attendance for lecture ID: $lectureId");
+
+    QuerySnapshot attendanceSnapshot = await FirebaseFirestore.instance
+        .collection('attendance')
+        .where('l_LectureID', isEqualTo: lectureId)
+        .get();
+    print(
+        "Attendance snapshot retrieved: ${attendanceSnapshot.docs.length} documents found");
+
+    List<Map<String, dynamic>> attendanceRecords = [];
+
+    for (var attendanceDoc in attendanceSnapshot.docs) {
+      var attendanceData = attendanceDoc.data() as Map<String, dynamic>;
+      print("Attendance data: $attendanceData");
+
+      var studentSnapshot = await FirebaseFirestore.instance
+          .collection('student')
+          .where('s_StudentID', isEqualTo: attendanceData['s_StudentID'])
+          .get();
+      print(
+          "Student document retrieved for ID: ${attendanceData['s_StudentID']}");
+
+      var studentData = studentSnapshot;
+      print("Student data: $studentData");
+
+      attendanceRecords.add({
+        'l_LectureID': attendanceData['l_LectureID'],
+        's_StudentID': attendanceData['s_StudentID'],
+        'time': attendanceData['time'],
+      });
+      print("Attendance record added: ${attendanceRecords.last}");
+    }
+
+    print("Total attendance records: ${attendanceRecords.length}");
+    return attendanceRecords;
   }
 }
 
