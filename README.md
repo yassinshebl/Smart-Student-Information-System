@@ -1,131 +1,161 @@
-# 👨‍💻 Smart Student Information System
-A comprehensive portal application built with Flutter and Firebase, designed for educational institutions. It provides separate, feature-rich interfaces for both Students and Instructors, ensuring a tailored user experience based on their roles.
+# 👨‍💻 Smart Student Information System (SSIS)
+
+A comprehensive, role-based portal application built with **Flutter** and **Firebase** for educational institutions. It provides separate, feature-rich interfaces for both Students and Instructors for managing academic records, course enrollments, schedules, grades, and attendance.
 
 ---
 
-## 📜 Description
-This project is a role-based application that serves as a central hub for students and instructors. It leverages Firebase Authentication for secure user login and Cloud Firestore for real-time data storage and retrieval. The primary goal is to provide users with quick access to their essential academic information, such as course schedules, profile details, and attendance records, all within a clean and intuitive interface.
+## 📌 Features
 
----
+### 🔐 Common & Security Features
+- **Secure Authentication**: Email & password authentication powered by Firebase Auth.
+- **Password Reset**: Integrated self-service password recovery via automated email links.
+- **Role-Based Access Control (RBAC)**: Automatically routes users to dedicated Student or Instructor dashboards upon login.
+- **Profile Management**: Profile page displaying personal details, academic metrics, and photo avatars.
 
-## ✨ Key Features
-### Common Features
-- **Secure Authentication:** Robust email and password login system powered by Firebase Auth.
-- **Password Reset:** A self-service "Forgot Password" feature that sends a reset link to the user's email.
-- **Role-Based Access Control (RBAC):** Automatically directs users to the correct dashboard (Student or Instructor) after login.
-- **Profile Page:** A unified profile screen where users can view their personal and academic information.
+### 🧑‍🎓 Student Portal
+- **Personalized Dashboard**: Overview of enrolled courses, schedules, and academic progress.
+- **Enrolled Courses View**: List of all enrolled courses, including course code, course name, and credit hours.
+- **Lecture Schedule & Attendance**: Real-time lecture schedules and attendance tracking logs.
 
----
-
-## 🧑‍🎓 Student-Specific Features
-- **Personalized Dashboard:** A welcoming home screen for students.
-- **View Enrolled Courses:** A dedicated page to list all courses the student is currently enrolled in, showing details like course name, code, and credit hours.
-- **Navigation Drawer:** Easy access to all student-specific pages.
-
----
-
-## 👩‍🏫 Instructor-Specific Features
-- **Dynamic Dashboard:** A powerful home screen that displays the instructor's profile and a real-time schedule of lectures for the current day.
-- **Attendance Overview:** The dashboard also shows a summary of attendance records for the day's lectures.
-- **View Taught Courses:** A "My Courses" page that lists all unique courses taught by the instructor.
-- **Intuitive Data Tables:** Schedules and attendance are presented in clean, easy-to-read tables.
+### 👩‍🏫 Instructor Portal
+- **Instructor Dashboard**: Real-time view of daily lecture schedules and student attendance summaries.
+- **Taught Courses Roster**: Dedicated view of courses taught by the instructor.
+- **Attendance & Grade Management**: Interface for tracking student attendance and recording course evaluation grades.
 
 ---
 
 ## ⚙️ Technology Stack
-- **Framework:** Flutter
-- **Backend-as-a-Service (BaaS):** Firebase
-- **Authentication:** Firebase Authentication
-- **Database:** Cloud Firestore
-- **State Management:** StatefulWidget (setState)
-- **Language:** Dart
+
+- **Framework**: [Flutter](https://flutter.dev/) (Dart)
+- **Backend-as-a-Service (BaaS)**: [Firebase](https://firebase.google.com/)
+- **Authentication**: Firebase Authentication
+- **Database**: Cloud Firestore & Firebase Realtime Database
+- **UI & Design**: Custom Material Design components & responsive layouts
 
 ---
 
-## 🗄️ Firebase Firestore Schema
-To run this project, you must structure your Cloud Firestore database with the following collections and fields. The `uid` from Firebase Authentication is used as the document ID in the `users`, `student`, and `instructor` collections to link data.
-- `users`: Links Auth `uid` to a role.
-  - **Document ID:** Firebase Auth `uid`
-  - **Fields:**
-    - `role`: (String) e.g., "student" or "instructor"
-- `student`: Stores student-specific data.
-  - **Document ID:** Firebase Auth `uid`
-  - **Fields:**
-    - `s_FirstName`: (String)
-    - `s_LastName`: (String)
-    - `s_Email`: (String)
-    - `s_Contact`: (String)
-    - `s_StudentID`: (String) e.g., "STU12345"
-    - `s_ProfilePic`: (String) Path to an asset image.
-- `instructor`: Stores instructor-specific data.
-  - **Document ID:** Firebase Auth `uid`
-  - **Fields:**
-    - `i_FirstName`: (String)
-    - `i_LastName`: (String)
-    - `i_Email`: (String)
-    - `i_Contact`: (String)
-    - `i_InstructorID`: (String) e.g., "INS54321"
-    - `i_ProfilePic`: (String) Path to an asset image.
-- `course`: Details of each course.
-  - **Fields:**
-    - `c_CourseCode`: (String) e.g., "CS101"
-    - `c_CourseName`: (String) e.g., "Introduction to Programming"
-    - `c_credit`: (Number) e.g., 3
-- `lecture`: Defines lecture sessions.
-  - **Fields:**
-    - `l_LectureID: (String) e.g., "LEC001"
-    - `c_CourseCode`: (String) Foreign key to `course`.
-    - `i_InstructorID`: (String) Foreign key to `instructor`.
-    - `l_Date`: (String) The day of the week, e.g., "wednesday" (lowercase).
-    - `start_time`: (String) e.g., "10:00 AM"
-- `enrollment`: Links students to lectures.
-  - **Fields:**
-    - `s_StudentID`: (String) Foreign key to `student`.
-    - `l_LectureID`: (String) Foreign key to `lecture`.
-- `attendance`: Logs student attendance.
-  - **Fields:**
-    - `l_LectureID`: (String) Foreign key to `lecture`.
-    - `s_StudentID`: (String) Foreign key to `student`.
-    - `time`: (String) The time of attendance marking.
+## 📁 Project Structure
+
+```text
+app/
+├── assets/                  # Images, assets, and profile photos
+│   ├── instructor/          # Instructor profile avatars
+│   └── student/             # Student profile avatars
+├── lib/
+│   ├── firebase_options.dart # Firebase configuration setup
+│   ├── main.dart            # Core application logic & route screens
+│   └── utils/               # Reusable styling & custom widgets
+│       ├── app_styles.dart  # Theme colors and styles
+│       ├── custom_button.dart# Styled custom button
+│       └── snackbar_utils.dart # Custom snackbar notification helper
+├── pubspec.yaml             # Flutter dependencies and assets manifest
+└── firebase.json            # Firebase CLI configuration
+```
+
+---
+
+## 🗄️ Cloud Firestore Schema
+
+To run this project, structure your Cloud Firestore database with the following collections and fields. The `uid` from Firebase Authentication is used as the document ID in `users`, `student`, and `instructor`.
+
+- **`users`**: Maps Auth `uid` to user role.
+  - **Doc ID**: Firebase Auth `uid`
+  - **Fields**: `role` (String, e.g., `"student"` or `"instructor"`)
+
+- **`student`**: Stores student profiles.
+  - **Doc ID**: Firebase Auth `uid`
+  - **Fields**: `s_FirstName`, `s_LastName`, `s_Email`, `s_Contact`, `s_StudentID` (e.g. `"STU12345"`), `s_ProfilePic` (String asset path)
+
+- **`instructor`**: Stores instructor profiles.
+  - **Doc ID**: Firebase Auth `uid`
+  - **Fields**: `i_FirstName`, `i_LastName`, `i_Email`, `i_Contact`, `i_InstructorID` (e.g. `"INS54321"`), `i_ProfilePic` (String asset path)
+
+- **`course`**: Details of academic courses.
+  - **Fields**: `c_CourseCode` (e.g. `"CS101"`), `c_CourseName` (e.g. `"Data Structures"`), `c_credit` (Number)
+
+- **`lecture`**: Defines lecture sessions.
+  - **Fields**: `l_LectureID` (e.g. `"LEC001"`), `c_CourseCode`, `i_InstructorID`, `l_Date` (e.g. `"wednesday"`), `start_time` (e.g. `"10:00 AM"`)
+
+- **`enrollment`**: Links students to lectures/courses.
+  - **Fields**: `s_StudentID`, `l_LectureID`
+
+- **`attendance`**: Logs student attendance records.
+  - **Fields**: `s_StudentID`, `l_LectureID`, `time`
 
 ---
 
 ## 🚀 Getting Started
-Follow these instructions to set up and run the project on your local machine.
 
-**Prerequisites**
-- Flutter SDK installed.
-- A code editor like VS Code or Android Studio.
-- A Google account to create a Firebase project.
+### Prerequisites
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (v3.4.0 or higher)
+- [Dart SDK](https://dart.dev/get-sdk)
+- Firebase Account & Project setup
 
-**Installation & Setup**
-1. Clone the Repository
-  ```bash
-  git clone https://github.com/yassinshebl/Smart-Student-Information-System.git
-  cd Smart-Student-Information-System
-  ```
-2. Set Up Firebase
-  - Go to the Firebase Console and create a new project.
-  - Enable Authentication and add the "Email/Password" sign-in method.
-  - Go to Firestore Database, create a new database in production or test mode, and create the collections and documents as defined in the Firestore Schema section above.
-  - Register your app (iOS, Android, or Web) in the Firebase project settings.
-  - Follow the on-screen instructions to connect your Flutter app. The easiest way is using the FlutterFire CLI:
-  ```Bash
-  flutterfire configure
-  ```
-  This will automatically generate the `firebase_options.dart` file with your project's credentials.
+### Installation & Setup
 
-3. Populate Data
-  - In the Firebase console, manually add a few users in the Authentication tab.
-  - In Firestore, add corresponding documents in the `users`, `student`/`instructor`, `course`, `lecture`, and `enrollment` collections so you have data to test with. Make sure the document IDs and foreign keys match!
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yassinshebl/Smart-Student-Information-System.git
+   cd Smart-Student-Information-System/app
+   ```
 
-4. Install Dependencies
-  ```Bash
-  flutter pub get
-  ```
+2. **Install dependencies**:
+   ```bash
+   flutter pub get
+   ```
 
-5. Run the Application
-  ```Bash
-  flutter run
-  ```
-You can now log in using the credentials you created in Firebase Authentication.
+3. **Configure Firebase**:
+   - Create a Firebase project in the [Firebase Console](https://console.firebase.google.com/).
+   - Enable **Email/Password** Authentication and **Cloud Firestore**.
+   - Configure your app using the [FlutterFire CLI](https://firebase.flutter.dev/docs/cli/):
+     ```bash
+     flutterfire configure
+     ```
+   - Alternatively, pass credentials using environment variables (`--dart-define`).
+
+4. **Run the application**:
+   ```bash
+   # Run on connected device or Chrome
+   flutter run -d chrome
+   ```
+
+---
+
+## 🛡️ Security & Environment Variables
+
+### 🔒 Firebase Security Best Practices
+- **Cloud Firestore Rules**: Enforce strict Firestore security rules in the Firebase Console (e.g. `allow read, write: if request.auth != null;`).
+- **GCP API Key Restrictions**: Restrict your API key in Google Cloud Console by HTTP referrer or app package signature.
+
+### 🔑 Compile-Time Environment Variables (`--dart-define`)
+To avoid hardcoding Firebase API keys in source code when pushing to public repositories, pass them at compile time:
+
+```bash
+flutter run \
+  --dart-define=FIREBASE_API_KEY="YOUR_API_KEY" \
+  --dart-define=FIREBASE_APP_ID="YOUR_APP_ID" \
+  --dart-define=FIREBASE_MESSAGING_SENDER_ID="YOUR_MESSAGING_SENDER_ID" \
+  --dart-define=FIREBASE_PROJECT_ID="YOUR_PROJECT_ID"
+```
+
+Or create a local `.env.json` file (which is added to `.gitignore`):
+
+```json
+{
+  "FIREBASE_API_KEY": "YOUR_API_KEY",
+  "FIREBASE_APP_ID": "YOUR_APP_ID",
+  "FIREBASE_MESSAGING_SENDER_ID": "YOUR_MESSAGING_SENDER_ID",
+  "FIREBASE_PROJECT_ID": "YOUR_PROJECT_ID"
+}
+```
+
+Run with:
+```bash
+flutter run --dart-define-from-file=.env.json
+```
+
+---
+
+## 📜 License
+
+This project is open-source and available under the [MIT License](LICENSE).

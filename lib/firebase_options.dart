@@ -50,10 +50,22 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDvphBkVbT7gIMCxeX4Jo1Ci235RwptGS8',
-    appId: '1:996794007271:web:c9b9f25507a8a161dc6c42',
-    messagingSenderId: '996794007271',
-    projectId: 'gui-app-f9c0c',
+    apiKey: String.fromEnvironment(
+      'FIREBASE_API_KEY',
+      defaultValue: 'AIzaSyDvphBkVbT7gIMCxeX4Jo1Ci235RwptGS8',
+    ),
+    appId: String.fromEnvironment(
+      'FIREBASE_APP_ID',
+      defaultValue: '1:996794007271:web:c9b9f25507a8a161dc6c42',
+    ),
+    messagingSenderId: String.fromEnvironment(
+      'FIREBASE_MESSAGING_SENDER_ID',
+      defaultValue: '996794007271',
+    ),
+    projectId: String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: 'gui-app-f9c0c',
+    ),
     authDomain: 'gui-app-f9c0c.firebaseapp.com',
     databaseURL: 'https://gui-app-f9c0c-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'gui-app-f9c0c.appspot.com',
@@ -61,10 +73,22 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDvphBkVbT7gIMCxeX4Jo1Ci235RwptGS8',
-    appId: '1:996794007271:web:b91559be4a8a7065dc6c42',
-    messagingSenderId: '996794007271',
-    projectId: 'gui-app-f9c0c',
+    apiKey: String.fromEnvironment(
+      'FIREBASE_API_KEY',
+      defaultValue: 'AIzaSyDvphBkVbT7gIMCxeX4Jo1Ci235RwptGS8',
+    ),
+    appId: String.fromEnvironment(
+      'FIREBASE_APP_ID',
+      defaultValue: '1:996794007271:web:b91559be4a8a7065dc6c42',
+    ),
+    messagingSenderId: String.fromEnvironment(
+      'FIREBASE_MESSAGING_SENDER_ID',
+      defaultValue: '996794007271',
+    ),
+    projectId: String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: 'gui-app-f9c0c',
+    ),
     authDomain: 'gui-app-f9c0c.firebaseapp.com',
     databaseURL: 'https://gui-app-f9c0c-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'gui-app-f9c0c.appspot.com',
